@@ -35,7 +35,7 @@ int main(){
 }
 
 void startGame(){
-    wprintf(L"WHITE(@) = 1, BLACK(O) = 2: input (1/2)\n");
+    printf("WHITE(@) = 1, BLACK(O) = 2: input (1/2)\n");
     int x, y;
     Board b;
     b.printb();
@@ -43,34 +43,34 @@ void startGame(){
     int color = BLACK;
 
     for(int i = 0; i<64; i++){
-        (color == 1 )? wprintf(L"WHITE(@)\n"):wprintf(L"BLACK(O)\n");
+        (color == 1 )? printf("WHITE(@)\n"):printf("BLACK(O)\n");
         if ( color == 2 ){
-            wprintf(L"x pos:");
-            wscanf(L"%d", &x);
-            wprintf(L"y pos:");
-            wscanf(L"%d", &y);
-            wprintf(L"\n");
-            // b.move(x, y, color)?wprintf(L"successfully moved\n"):wprintf(L"could not move\n");
+            printf("x pos:");
+            scanf("%d", &x);
+            printf("y pos:");
+            scanf("%d", &y);
+            printf("\n");
+            // b.move(x, y, color)?printf("successfully moved\n"):printf("could not move\n");
             while(!b.move(getPos(x, y), color)){
-                wprintf(L"Please select a legal move!\n");
-                wprintf(L"x pos:");
-                wscanf(L"%d", &x);
-                wprintf(L"y pos:");
-                wscanf(L"%d", &y);
-                wprintf(L"\n");
+                printf("Please select a legal move!\n");
+                printf("x pos:");
+                scanf("%d", &x);
+                printf("y pos:");
+                scanf("%d", &y);
+                printf("\n");
             }
         }else{
             BitBoard wb, bb;
             b.get_Board(&wb, &bb);
             int move = ai.getNextMove(wb, bb, color);
-            wprintf(L"AI moved:%d\n", move);
+            printf("AI moved:%d\n", move);
             b.move(move,color);
         }
 
-        wprintf(L"White Disks(@):");
-        wprintf(L"%d\n", count(*b.get_Board(WHITE)));
-        wprintf(L"Black Disks(O):");
-        wprintf(L"%d\n", count(*b.get_Board(BLACK)));
+        printf("White Disks(@):");
+        printf("%d\n", count(*b.get_Board(WHITE)));
+        printf("Black Disks(O):");
+        printf("%d\n", count(*b.get_Board(BLACK)));
         b.printb();
         color = 3 - color;
     }
@@ -78,7 +78,7 @@ void startGame(){
 }
 
 void startGame2(){
-    wprintf(L"WHITE(@) = 1, BLACK(O) = 2: input (1/2)\n");
+    printf("WHITE(@) = 1, BLACK(O) = 2: input (1/2)\n");
     int x, y;
     Board b;
     int color = BLACK;
@@ -87,29 +87,29 @@ void startGame2(){
     ReversiAlgorithm ai;
 
     for(int i = 0; i<64; i++){
-        wprintf(L"\n");        
-        (color == 1 )? wprintf(L"WHITE(@)\n"):wprintf(L"BLACK(O)\n");
-        wprintf(L"x pos:");
-        wscanf(L"%d", &x);
-        wprintf(L"y pos:");
-        wscanf(L"%d", &y);
-        wprintf(L"\n");
-        // b.move(x, y, color)?wprintf(L"successfully moved\n"):wprintf(L"could not move\n");
+        printf("\n");        
+        (color == 1 )? printf("WHITE(@)\n"):printf("BLACK(O)\n");
+        printf("x pos:");
+        scanf("%d", &x);
+        printf("y pos:");
+        scanf("%d", &y);
+        printf("\n");
+        // b.move(x, y, color)?printf("successfully moved\n"):printf("could not move\n");
         while(!b.move(getPos(x, y), color)){
-            wprintf(L"Please select a legal move!\n");
-            wprintf(L"x pos:");
-            wscanf(L"%d", &x);
-            wprintf(L"y pos:");
-            wscanf(L"%d", &y);
-            wprintf(L"\n");
+            printf("Please select a legal move!\n");
+            printf("x pos:");
+            scanf("%d", &x);
+            printf("y pos:");
+            scanf("%d", &y);
+            printf("\n");
         }
 
         color = 3 - color;
         moves = b.getValidMoves(color);
-        wprintf(L"White Disks(@):");
-        wprintf(L"%d\n", count(*b.get_Board(WHITE)));
-        wprintf(L"Black Disks(O):");
-        wprintf(L"%d\n", count(*b.get_Board(BLACK)));
+        printf("White Disks(@):");
+        printf("%d\n", count(*b.get_Board(WHITE)));
+        printf("Black Disks(O):");
+        printf("%d\n", count(*b.get_Board(BLACK)));
         b.printb(moves);
         
     }
@@ -117,7 +117,7 @@ void startGame2(){
 }
 
 void test(){
-    wprintf(L"WHITE(@) = 1, BLACK(O) = 2: input (1/2)\n");
+    printf("WHITE(@) = 1, BLACK(O) = 2: input (1/2)\n");
     Board b;
     ReversiAlgorithm ai;
 
@@ -129,9 +129,9 @@ void test(){
     m = b.getValidMoves(BLACK);
     int i;
     for(i=0;i<64;i++){
-        if(getBit(m, i) == 1ull) wprintf(L"%d, ", i);
+        if(getBit(m, i) == 1ull) printf("%d, ", i);
     }
-    wprintf(L"\n");
+    printf("\n");
 
     b.printb(m);
     int color = BLACK;
@@ -140,9 +140,9 @@ void test(){
     std::vector<int> moves = ai.getAvailableMoves(color, &num);
 
     for(auto itr = moves.begin(); itr != moves.end(); ++itr){
-        wprintf(L"%d, ",*itr);
+        printf("%d, ",*itr);
     }
-    wprintf(L"\n");
+    printf("\n");
     std::wcin >> num;
 
 }

@@ -171,7 +171,7 @@ int ReversiAlgorithm::playout(int color){
         if(passCount == 2) break;
 
         if (MoveAtRandom(moves, num, color, i++) > 0) passCount = 0;
-        // color == 1 ? wprintf(L"White[@]\n"):wprintf(L"Black[O]\n");
+        // color == 1 ? printf("White[@]\n"):printf("Black[O]\n");
         board.printb();
         //reverse turn color
         color = 3 - color;
@@ -190,7 +190,7 @@ ReversiAlgorithm::ReversiAlgorithm(){
 void printMoves(BitBoard moves){
     int i;
     for(i=0;i<64;i++){
-        if(getBit(moves, i) == 1ull) wprintf(L"%d, ", i);
+        if(getBit(moves, i) == 1ull) printf("%d, ", i);
     }
-    wprintf(L"\n");
+    printf("\n");
 }

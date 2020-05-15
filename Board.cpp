@@ -181,39 +181,39 @@ int Board::move(int pos, int color){
 
 void Board::printb(BitBoard anothoer){
     int i, j = 0;
-    wchar_t num[8][5] = { L" 1 ", L" 2 ", L" 3 ", L" 4 ", L" 5 ", L" 6 ", L" 7 ", L" 8 "};
-    wprintf(L"    1  2  3  4  5  6  7  8 \n");
+    char num[8][5] = { " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    printf("    1  2  3  4  5  6  7  8 \n");
     for(i=0;i<BOARD_SIZE;i++){
-        if( (i+1) % 8 == 1 ) wprintf(num[j++]);
+        if( (i+1) % 8 == 1 ) std::cout << num[j++];
 
         if(getBit(anothoer,i)==1ull){
-            wprintf(L"[+]");
+            printf("[+]");
         }else if(getBit(wBoard,i)==1ull){
-            wprintf(L"[@]");
+            printf("[@]");
         }else if(getBit(bBoard,i)==1ull){
-            wprintf(L"[O]");
+            printf("[O]");
         }else{
-            wprintf(L"[ ]");
+            printf("[ ]");
         }
 
-        if( (i+1) % 8 == 0 ) wprintf(L"\n");
+        if( (i+1) % 8 == 0 ) printf("\n");
     }
 }
 
 void Board::printb(){
     int i, j = 0;
-    wchar_t num[8][5] = { L" 1 ", L" 2 ", L" 3 ", L" 4 ", L" 5 ", L" 6 ", L" 7 ", L" 8 "};
-    wprintf(L"    1  2  3  4  5  6  7  8 \n");
+    char num[8][5] = { " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    printf("    1  2  3  4  5  6  7  8 \n");
     for(i=0;i<BOARD_SIZE;i++){
-        if( (i+1) % 8 == 1 ) wprintf(num[j++]);
+        if( (i+1) % 8 == 1 ) std::cout << num[j++];
         if(getBit(wBoard,i)==1ull){
-            wprintf(L"[@]");
+            printf("[@]");
         }else if(getBit(bBoard,i)==1ull){
-            wprintf(L"[O]");
+            printf("[O]");
         }else{
-            wprintf(L"[ ]");
+            printf("[ ]");
         }
-        if( (i+1) % 8 == 0 ) wprintf(L"\n");
+        if( (i+1) % 8 == 0 ) printf("\n");
     }
 }
 
@@ -264,26 +264,26 @@ void Board::roolback(){
 
 //------------------------------------------
 
-int getPos(const wchar_t *pos){
+int getPos(const char *pos){
     int x,y;
-    if(wcscmp(&pos[1],L"A")) x = 0;
-    else if (wcscmp(&pos[1],L"A")) x = 1;
-    else if (wcscmp(&pos[1],L"A")) x = 2;
-    else if (wcscmp(&pos[1],L"A")) x = 3;
-    else if (wcscmp(&pos[1],L"A")) x = 4;
-    else if (wcscmp(&pos[1],L"A")) x = 5;
-    else if (wcscmp(&pos[1],L"A")) x = 6;
-    else if (wcscmp(&pos[1],L"A")) x = 7;
+    if(strcmp(&pos[1],"A")) x = 0;
+    else if (strcmp(&pos[1],"A")) x = 1;
+    else if (strcmp(&pos[1],"A")) x = 2;
+    else if (strcmp(&pos[1],"A")) x = 3;
+    else if (strcmp(&pos[1],"A")) x = 4;
+    else if (strcmp(&pos[1],"A")) x = 5;
+    else if (strcmp(&pos[1],"A")) x = 6;
+    else if (strcmp(&pos[1],"A")) x = 7;
     else return 99;
 
-    if(wcscmp(&pos[0],L"0")) y = 0;
-    else if (wcscmp(&pos[0],L"1")) y = 1;
-    else if (wcscmp(&pos[0],L"2")) y = 2;
-    else if (wcscmp(&pos[0],L"3")) y = 3;
-    else if (wcscmp(&pos[0],L"4")) y = 4;
-    else if (wcscmp(&pos[0],L"5")) y = 5;
-    else if (wcscmp(&pos[0],L"6")) y = 6;
-    else if (wcscmp(&pos[0],L"7")) y = 7;
+    if(strcmp(&pos[0],"0")) y = 0;
+    else if (strcmp(&pos[0],"1")) y = 1;
+    else if (strcmp(&pos[0],"2")) y = 2;
+    else if (strcmp(&pos[0],"3")) y = 3;
+    else if (strcmp(&pos[0],"4")) y = 4;
+    else if (strcmp(&pos[0],"5")) y = 5;
+    else if (strcmp(&pos[0],"6")) y = 6;
+    else if (strcmp(&pos[0],"7")) y = 7;
     else return 99;
 
     return getPos(x, y);
@@ -304,15 +304,15 @@ BitBoard getBit(BitBoard b, int pos){
 
 void printBitBoard(BitBoard b){
     int i, j = 0;
-    wchar_t num[8][5] = { L" 1 ", L" 2 ", L" 3 ", L" 4 ", L" 5 ", L" 6 ", L" 7 ", L" 8 "};
-    wprintf(L"    1  2  3  4  5  6  7  8 \n");
+    char num[8][5] = { " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    printf("    1  2  3  4  5  6  7  8 \n");
     for(i=0;i<BOARD_SIZE;i++){
-        if( (i+1) % 8 == 1 ) wprintf(num[j++]);
+        if( (i+1) % 8 == 1 ) std::cout << num[j++];
         if(getBit(b,i)==1ull){
-            wprintf(L"[+]");
+            printf("[+]");
         }else{
-            wprintf(L"[ ]");
+            printf("[ ]");
         }
-        if( (i+1) % 8 == 0 ) wprintf(L"\n");
+        if( (i+1) % 8 == 0 ) printf("\n");
     }
 }

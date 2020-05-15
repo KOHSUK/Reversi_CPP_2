@@ -1,11 +1,12 @@
 #pragma once
 #include <stdint.h>
 #include <stdio.h>
+#include <iostream>
 #define AVAILABLE_MAX 64
 
 typedef uint64_t BitBoard;
 
-int getPos(wchar_t *pos);
+int getPos(char *pos);
 
 int getPos(int x, int y);
 
