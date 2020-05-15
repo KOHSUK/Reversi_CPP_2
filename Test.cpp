@@ -3,12 +3,15 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <locale>
 #define WHITE 1
 #define BLACK 2
 
 void startGame();
 void startGame2();
 void test();
+int getUserXPos();
+char toUpperCase(char c);
 
 int main(){
     // Board b;
@@ -46,7 +49,7 @@ void startGame(){
         (color == 1 )? printf("WHITE(@)\n"):printf("BLACK(O)\n");
         if ( color == 2 ){
             printf("x pos:");
-            scanf("%d", &x);
+            x = getUserXPos();
             printf("y pos:");
             scanf("%d", &y);
             printf("\n");
@@ -75,6 +78,19 @@ void startGame(){
         color = 3 - color;
     }
     std::wcin >> x;
+}
+
+int getUserXPos() {
+    char c;
+
+    scanf("%c", &c);
+
+    return int(toUpperCase(c)) - 64;
+}
+
+char toUpperCase(char c) {
+    std::locale l = std::locale::classic();
+    return std::toupper(c, l);
 }
 
 void startGame2(){
