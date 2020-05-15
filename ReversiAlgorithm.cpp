@@ -171,8 +171,7 @@ int ReversiAlgorithm::playout(int color){
         if(passCount == 2) break;
 
         if (MoveAtRandom(moves, num, color, i++) > 0) passCount = 0;
-        // color == 1 ? printf("White[@]\n"):printf("Black[O]\n");
-        board.printb();
+
         //reverse turn color
         color = 3 - color;
     }
