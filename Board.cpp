@@ -42,19 +42,25 @@ BitBoard Board::translate(BitBoard pos, int index){
 //---------------<public>----------------------
 Board::Board(){
     wBoard = 0x0000001008000000;
+	wSavePoint = wBoard;
     bBoard = 0x0000000810000000;
+	bSavePoint = bBoard;
     holes = 0x0000000000000000;
 }
 
 Board::Board(BitBoard w, BitBoard b){
     wBoard = w;
+	wSavePoint = wBoard;
     bBoard = b;
+	bSavePoint = bBoard;
     holes = 0b0000000000000000000000000000000000000000000000000000000000000000;
 }
 
 Board::Board(BitBoard w, BitBoard b, BitBoard h){
     wBoard = w;
+	wSavePoint = wBoard;
     bBoard = b;
+	bSavePoint = bBoard;
     holes = h;  
 }
 
@@ -116,7 +122,7 @@ BitBoard Board::getValidMoves(int color){
     temp |= target & ( temp >> 9 );
     temp |= target & ( temp >> 9 );
     temp |= target & ( temp >> 9 );
-    temp |= target & ( temp >> 9 );
+	temp |= target & (temp >> 9);
     result |= (temp >> 9) & emptyPlaces;
 
     //upper right
@@ -125,7 +131,7 @@ BitBoard Board::getValidMoves(int color){
     temp |= target & ( temp >> 7 );
     temp |= target & ( temp >> 7 );
     temp |= target & ( temp >> 7 );
-    temp |= target & ( temp >> 7 );
+	temp |= target & (temp >> 7);
     result |= (temp >> 7) & emptyPlaces;
 
     //lower left
@@ -134,7 +140,7 @@ BitBoard Board::getValidMoves(int color){
     temp |= target & ( temp << 7 );
     temp |= target & ( temp << 7 );
     temp |= target & ( temp << 7 );
-    temp |= target & ( temp << 7 );
+	temp |= target & (temp << 7);
     result |= (temp << 7) & emptyPlaces;
 
     //lower right
@@ -143,46 +149,205 @@ BitBoard Board::getValidMoves(int color){
     temp |= target & ( temp << 9 );
     temp |= target & ( temp << 9 );
     temp |= target & ( temp << 9 );
-    temp |= target & ( temp << 9 );
+	temp |= target & (temp << 9);
     result |= (temp << 9) & emptyPlaces;
+
+	result &= (~holes);
 
     return result;
 }
 
+//int Board::move(int pos, int color){
+//    BitBoard move = 1ull << pos;
+//    BitBoard *mine = get_Board(color);
+//    BitBoard *opponents = get_Board(3 - color);
+//    if(((*mine | *opponents) & move) > 0ull) return 0;
+//
+//    BitBoard result = 0,temp;
+//    int i;
+//    for(i=0;i<8;i++){
+//        temp = 0ull;
+//        BitBoard mask = translate(move, i);
+//        while(mask != 0ull && (*opponents & mask) != 0ull){
+//            temp |= mask;
+//            mask = translate(mask, i);
+//        }
+//        if((mask & *mine) != 0ull){
+//            result |= temp;
+//        }
+//    }
+//
+//    int cnt = count(result);
+//    if(cnt > 0){
+//        //flip
+//        *mine ^= (result | move);
+//        *opponents ^= result;
+//    }
+//
+//    return cnt;
+//}
+
 int Board::move(int pos, int color){
-    BitBoard move = 1ull << pos;
-    BitBoard *mine = get_Board(color);
-    BitBoard *opponents = get_Board(3 - color);
-    if(((*mine | *opponents) & move) > 0ull) return 0;
+	BitBoard mv = 1ull << pos;
+	BitBoard *mine = get_Board(color);
+	BitBoard *opponents = get_Board(3 - color);
+	if (((*mine | *opponents) & mv) > 0ull) return 0;
 
-    BitBoard result = 0,temp;
-    int i;
-    for(i=0;i<8;i++){
-        temp = 0ull;
-        BitBoard mask = translate(move, i);
-        while(mask != 0ull && (*opponents & mask) != 0ull){
-            temp |= mask;
-            mask = translate(mask, i);
-        }
-        if((mask & *mine) != 0ull){
-            result |= temp;
-        }
-    }
+	BitBoard result = 0ull, temp, mask, chkPos;
+	
+	//left
+	temp = 0ull;
+	chkPos = ((mv & 0xfefefefefefefefe) >> 1);
+	mask = chkPos & 0xfefefefefefefefe;
 
-    int cnt = count(result);
-    if(cnt > 0){
-        //flip
-        *mine ^= (result | move);
-        *opponents ^= result;
-    }
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos >>= 1;
+		mask = chkPos & 0xfefefefefefefefe;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
 
-    return cnt;
+	//right
+	temp = 0ull;
+	chkPos = ((mv & 0x7f7f7f7f7f7f7f7f) << 1);
+	mask = chkPos & 0x7f7f7f7f7f7f7f7f;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos <<= 1;
+		mask = chkPos & 0x7f7f7f7f7f7f7f7f;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	//upper  
+	temp = 0ull;
+	chkPos = ((mv & 0xffffffffffffff00) >> 8);
+	mask = chkPos & 0xffffffffffffff00;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos >>= 8;
+		mask = chkPos & 0xffffffffffffff00;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	//lower
+	temp = 0ull;
+	chkPos = ((mv & 0x00ffffffffffffff) << 8);
+	mask = chkPos & 0x00ffffffffffffff;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos <<= 8;
+		mask = chkPos & 0x00ffffffffffffff;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	//upper left
+	temp = 0ull;
+	chkPos = ((mv & 0xfefefefefefefe00) >> 9);
+	mask = chkPos & 0xfefefefefefefe00;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos >>= 9;
+		mask = chkPos & 0xfefefefefefefe00;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	//upper right
+	temp = 0ull;
+	chkPos = ((mv & 0x7f7f7f7f7f7f7f00) >> 7);
+	mask = chkPos & 0x7f7f7f7f7f7f7f00;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos >>= 7;
+		mask = chkPos & 0x7f7f7f7f7f7f7f00;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	//lower left
+	temp = 0ull;
+	chkPos = ((mv & 0x00fefefefefefefe) << 7);
+	mask = chkPos & 0x00fefefefefefefe;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos <<= 7;
+		mask = chkPos & 0x00fefefefefefefe;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	//lower right
+	temp = 0ull;
+	chkPos = ((mv & 0x007f7f7f7f7f7f7f) << 9);
+	mask = chkPos & 0x007f7f7f7f7f7f7f;
+
+	while (mask != 0ull && (*opponents & mask) != 0ull) {
+		temp |= mask;
+		chkPos <<= 9;
+		mask = chkPos & 0x007f7f7f7f7f7f7f;
+	}
+	if ((chkPos & *mine) != 0ull) {
+		result |= temp;
+	}
+
+	int cnt = count(result);
+	if(cnt > 0){
+	    //flip
+	    *mine ^= (result | mv);
+	    *opponents ^= result;
+	}
+	
+	return cnt;
+
+}
+
+int Board::getScore(int color) {
+	int wCount = count(wBoard);
+	int bCount = count(bBoard);
+
+	switch (color)
+	{
+	case WHITE:
+		if (wCount > bCount) {
+			return 1;
+		} else {
+			return -1;
+		}
+		break;
+	case BLACK:
+		if (wCount < bCount) {
+			return 1;
+		} else {
+			return -1;
+		}
+		break;
+	default:
+		return 0;
+		break;
+	}
 }
 
 void Board::printb(BitBoard anothoer){
     int i, j = 0;
     char num[8][5] = { " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
-    printf("    1  2  3  4  5  6  7  8 \n");
+    printf("    A  B  C  D  E  F  G  H \n");
     for(i=0;i<BOARD_SIZE;i++){
         if( (i+1) % 8 == 1 ) std::cout << num[j++];
 
@@ -203,14 +368,20 @@ void Board::printb(BitBoard anothoer){
 void Board::printb(){
     int i, j = 0;
     char num[8][5] = { " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
-    printf("    1  2  3  4  5  6  7  8 \n");
+    printf("    A  B  C  D  E  F  G  H \n");
     for(i=0;i<BOARD_SIZE;i++){
         if( (i+1) % 8 == 1 ) std::cout << num[j++];
+
         if(getBit(wBoard,i)==1ull){
             printf("[@]");
-        }else if(getBit(bBoard,i)==1ull){
+        }
+		else if(getBit(bBoard,i)==1ull){
             printf("[O]");
-        }else{
+		}
+		else if (getBit(holes, i) == 1ull) {
+			printf("[X]");
+		}
+		else{
             printf("[ ]");
         }
         if( (i+1) % 8 == 0 ) printf("\n");
@@ -230,6 +401,12 @@ int count(BitBoard b){
 void Board::set_Board(BitBoard wb, BitBoard bb){
     wBoard = wb;
     bBoard = bb;
+}
+
+void Board::set_Board(BitBoard wb, BitBoard bb, BitBoard h) {
+	wBoard = wb;
+	bBoard = bb;
+	holes = h;
 }
 
 BitBoard *Board::get_Board(int color){
@@ -252,46 +429,71 @@ void Board::get_Board(BitBoard *wb, BitBoard *bb){
     *bb = bBoard;
 }
 
-void Board::saveBoard(){
+void Board::save(){
     wSavePoint = wBoard;
     bSavePoint = bBoard;
 }
 
-void Board::roolback(){
+void Board::rollback(){
     wBoard = wSavePoint;
     bBoard = bSavePoint;
 }
 
 //------------------------------------------
 
-int getPos(const char *pos){
-    int x,y;
-    if(strcmp(&pos[1],"A")) x = 0;
-    else if (strcmp(&pos[1],"A")) x = 1;
-    else if (strcmp(&pos[1],"A")) x = 2;
-    else if (strcmp(&pos[1],"A")) x = 3;
-    else if (strcmp(&pos[1],"A")) x = 4;
-    else if (strcmp(&pos[1],"A")) x = 5;
-    else if (strcmp(&pos[1],"A")) x = 6;
-    else if (strcmp(&pos[1],"A")) x = 7;
-    else return 99;
+//int getPos(const char *pos){
+//    int x,y;
+//    if(strcmp(&pos[1],"A")) x = 0;
+//    else if (strcmp(&pos[1],"A")) x = 1;
+//    else if (strcmp(&pos[1],"A")) x = 2;
+//    else if (strcmp(&pos[1],"A")) x = 3;
+//    else if (strcmp(&pos[1],"A")) x = 4;
+//    else if (strcmp(&pos[1],"A")) x = 5;
+//    else if (strcmp(&pos[1],"A")) x = 6;
+//    else if (strcmp(&pos[1],"A")) x = 7;
+//    else return 99;
+//
+//    if(strcmp(&pos[0],"0")) y = 0;
+//    else if (strcmp(&pos[0],"1")) y = 1;
+//    else if (strcmp(&pos[0],"2")) y = 2;
+//    else if (strcmp(&pos[0],"3")) y = 3;
+//    else if (strcmp(&pos[0],"4")) y = 4;
+//    else if (strcmp(&pos[0],"5")) y = 5;
+//    else if (strcmp(&pos[0],"6")) y = 6;
+//    else if (strcmp(&pos[0],"7")) y = 7;
+//    else return 99;
+//
+//    return getPos(x, y);
+//
+//}
 
-    if(strcmp(&pos[0],"0")) y = 0;
-    else if (strcmp(&pos[0],"1")) y = 1;
-    else if (strcmp(&pos[0],"2")) y = 2;
-    else if (strcmp(&pos[0],"3")) y = 3;
-    else if (strcmp(&pos[0],"4")) y = 4;
-    else if (strcmp(&pos[0],"5")) y = 5;
-    else if (strcmp(&pos[0],"6")) y = 6;
-    else if (strcmp(&pos[0],"7")) y = 7;
-    else return 99;
+int getPos(char* move) {
+	if (move[3] == L'0' || move[4] == L'0') return INVALID_MOVE;
 
-    return getPos(x, y);
+	int x = (int)move[3] - 64;
+	int y = (int)move[4] - 48;
 
+	return getPos(x, y);
 }
 
 inline int getPos(int x, int y){
     return (x - 1) + (y - 1) * 8;
+}
+
+char charPos[2];
+char * getCharPos(int pos) {
+	int x, y;
+	if (pos > 63 || pos < 0) {
+		charPos[0] = (char)48;
+		charPos[1] = (char)48;
+	}
+	else {
+		y = (int)((pos + 8) / 8);
+		x = ((pos + 8) % 8) + 1;
+		charPos[0] = (char)(x + 64);
+		charPos[1] = (char)(y + 48);
+	}
+	return charPos;
 }
 
 BitBoard getBits(BitBoard b, int pos, int n){

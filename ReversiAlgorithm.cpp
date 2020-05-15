@@ -99,7 +99,7 @@ int ReversiAlgorithm::getNextMove(BitBoard wb, BitBoard bb, int color){
 
     for(auto itr = moves.begin(); itr != moves.end(); ++itr){
         
-        board.saveBoard();
+        board.save();
         board.move(*itr, color);
         win_count = 0;
 
@@ -121,7 +121,7 @@ int ReversiAlgorithm::getNextMove(BitBoard wb, BitBoard bb, int color){
             selMove = *itr;
         }
         
-        board.roolback();
+        board.rollback();
     }
     
     printf("Move:%d, WinRate:%f\n", selMove, maxWinRate);

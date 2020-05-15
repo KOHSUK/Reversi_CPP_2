@@ -11,25 +11,25 @@ void startGame2();
 void test();
 
 int main(){
-    Board b;
-    BitBoard wb = 0x0200000000000000;
-    BitBoard bb = 0x01472F3F7FBE7FFE;
-    b.set_Board(wb, bb);
+    // Board b;
+    // BitBoard wb = 0x0200000000000000;
+    // BitBoard bb = 0x01472F3F7FBE7FFE;
+    // b.set_Board(wb, bb);
 
-    b.printb();
-    printf("BLACK = %d\n", count(*b.get_Board(BLACK)));
-    printf("WHITE = %d\n", count(*b.get_Board(WHITE)));
+    // b.printb();
+    // printf("BLACK = %d\n", count(*b.get_Board(BLACK)));
+    // printf("WHITE = %d\n", count(*b.get_Board(WHITE)));
 
-    BitBoard moves;
-    moves = b.getValidMoves(BLACK);
+    // BitBoard moves;
+    // moves = b.getValidMoves(BLACK);
     
-    printf("\n");
-    printf("flipped disks = %d\n",b.move(49,BLACK));
-    b.printb(moves);
+    // printf("\n");
+    // printf("flipped disks = %d\n",b.move(49,BLACK));
+    // b.printb(moves);
 
-    int n;
-    scanf("%d", &n);
-    // startGame();
+    // int n;
+    // scanf("%d", &n);
+    startGame();
     // test();
     return 0;
 }
